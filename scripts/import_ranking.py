@@ -1,8 +1,12 @@
+import os
+from dotenv import load_dotenv
 import pandas as pd
 import psycopg2
 from psycopg2 import sql
 from datetime import date
 from typing import Dict, Any
+
+load_dotenv()  # Carga variables de entorno desde el archivo .env 
 
 # ----------------------------------------------------
 # A. FUNCIÓN DE CONEXIÓN A LA BASE DE DATOS
@@ -157,11 +161,11 @@ if __name__ == "__main__":
     
     # --- CONFIGURACIÓN DE LA BASE DE DATOS ---
     DB_CONFIG = {
-        'db_name': 'clubtenis_db',
-        'db_user': 'postgres', 
-        'db_password': 'REDACTED', # <--- ¡CONFIRMA QUE ESTA ES TU CONTRASEÑA!
-        'db_host': 'localhost',
-        'db_port': '5432'
+        'dbname': os.getenv('DB_NAME'),
+        'user': os.getenv('DB_USER'),
+        'password': os.getenv('DB_PASSWORD'),
+        'host': os.getenv('DB_HOST'),
+        'port': os.getenv('DB_PORT')
     }
 
     # --- CONFIGURACIÓN DEL RANKING ---
