@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import psycopg2
@@ -5,13 +7,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
 from datetime import date
 
-# --- 1. CONFIGURACIÓN DE LA BASE DE DATOS ---
+load_dotenv()  # Carga variables de entorno desde el archivo .env 
+
+# --- 1. CONFIGURACIÓN DE LA BASE DE DATOS --- desde el .env
 DB_CONFIG = {
-    'dbname': 'clubtenis_db',
-    'user': 'postgres',
-    'password': 'REDACTED',
-    'host': 'localhost',
-    'port': '5432'
+    'dbname': os.getenv('DB_NAME'),
+    'user': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSWORD'),
+    'host': os.getenv('DB_HOST'),
+    'port': os.getenv('DB_PORT')
 }
 
 # --- 2. DEFINICIÓN DEL MODELO DE DATOS (Pydantic) ---
