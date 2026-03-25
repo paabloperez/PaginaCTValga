@@ -161,11 +161,11 @@ if __name__ == "__main__":
     
     # --- CONFIGURACIÓN DE LA BASE DE DATOS ---
     DB_CONFIG = {
-        'db_name': 'clubtenis_db',
-        'db_user': 'user_valga',
-        'db_password': 'password_valga',
-        'db_host': 'db',
-        'db_port': '5432'
+        'db_name': os.getenv('DB_NAME'),
+        'db_user': os.getenv('DB_USER'),
+        'db_password': os.getenv('DB_PASSWORD'),
+        'db_host': os.getenv('DB_HOST', 'db'),
+        'db_port': os.getenv('DB_PORT', '5432')
     }
 
     # --- CONFIGURACIÓN DEL RANKING ---

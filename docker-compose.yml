@@ -1,30 +1,45 @@
 version: '3.8'
 
 services:
-  # Base de Datos
+  # Base de Datos (PostgreSQL)
   db:
     image: postgres:15
+    container_name: ctvalga_db
     environment:
       POSTGRES_USER: user_valga
       POSTGRES_PASSWORD: password_valga
       POSTGRES_DB: clubtenis_db
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   # API Python (FastAPI)
   backend:
     build: ./backend-api
+    container_name: ctvalga_backend
     ports:
       - "8000:8000"
     environment:
       DATABASE_URL: postgresql://user_valga:password_valga@db:5432/clubtenis_db
+      DB_HOST: db
+      DB_NAME: clubtenis_db
+      DB_USER: user_valga
+      DB_PASSWORD: password_valga
+    volumes:
+      - ./scripts:/app/scripts
     depends_on:
       - db
 
-  # Servidor Node.js
+  # Servidor Node.js (Express)
   frontend-server:
     build: ./node-server
+    container_name: ctvalga_frontend
     ports:
       - "3000:3000"
     depends_on:
       - backend
+
+# DEFINICIÓN DEL VOLUMEN (Es como un disco virtual gestionado por Docker)
+volumes:
+  postgres_data:

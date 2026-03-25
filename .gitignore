@@ -50,4 +50,17 @@ node-server/.env
 # Ignora archivos temporales de Excel (empiezan por ~$)
 ~$*.xlsx
 scripts/ranking_M.xlsx 
-# Nota: Si quieres subir el Excel original, borra la línea de arriba.
+
+# --- DOCKER ---
+# Ignora archivos de configuración local de Docker
+.docker/
+docker-compose.override.yml
+
+# Ignora los datos de la base de datos si decides usar volúmenes locales
+postgres_data/
+pgdata/
+data/db/
+
+# Ignora imágenes exportadas o capas temporales
+*.tar
+*.tar.gz
