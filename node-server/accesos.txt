@@ -1,0 +1,8 @@
+[3/25/2026, 1:02:13 AM] Visita a: /api/clima
+[3/25/2026, 1:13:03 AM] Visita a: /api/clima
+[3/25/2026, 1:13:07 AM] Visita a: /api/ranking-club
+[3/25/2026, 1:13:10 AM] Visita a: /api/clima
+[3/25/2026, 1:13:18 AM] Visita a: /api/clima
+[3/25/2026, 1:13:23 AM] Visita a: /api/ranking-club
+[3/25/2026, 1:13:25 AM] Visita a: /api/clima
+[3/25/2026, 1:13:29 AM] Visita a: /api/clima

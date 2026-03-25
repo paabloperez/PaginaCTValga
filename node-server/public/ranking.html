@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎾 Club de Tenis Valga - Ranking</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header class="cabecera-jugadores">
+        <a href="index.html" class="back-link">← Volver al Inicio</a>
+        <img src="assets/logoCTValga.jpeg" alt="Logo del Club de Tenis Valga" class="club-logo">
+        <h1>Club de Tenis Valga</h1>
+        <p>Consulta el ranking de nuestro club y el autonómico.</p>
+    </header>
+
+    <main class="contenido-principal">
+        <section id="ranking-jugadores">
+            <h2>Clasificación por puntos:</h2>
+
+            <div id="ranking-api-container">
+                <p>Cargando ranking...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="pie-de-pagina">
+        <p>&copy; 2024 Club de Tenis Valga. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        async function cargarRanking() {
+            const contenedor = document.getElementById('ranking-api-container');
+            if (!contenedor) return;
+
+            try {
+                // Pedimos los datos a NUESTRO servidor de Node (puerto 3000)
+                const response = await fetch('http://localhost:3000/api/ranking-club');
+                const jugadores = await response.json();
+
+                let tablaHTML = `
+                    <table class="tabla-ranking">
+                        <thead>
+                            <tr>
+                                <th>Puesto Club</th>
+                                <th>Nombre</th>
+                                <th>Puntos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                jugadores.forEach(jugador => {
+                    tablaHTML += `
+                        <tr>
+                            <td>${jugador.posicion_club}</td>
+                            <td>${jugador.nombre_completo}</td>
+                            <td>${jugador.puntos}</td>
+                        </tr>
+                    `;
+                });
+
+                tablaHTML += `</tbody></table>`;
+                contenedor.innerHTML = tablaHTML;
+
+            } catch (error) {
+                console.error("Error:", error);
+                contenedor.innerHTML = "<p>⚠️ Error al cargar el ranking. Asegúrate de que el servidor Node está encendido.</p>";
+            }
+        }
+
+        // Ejecutamos la función
+        cargarRanking();
+    </script>
+    
+</body>
+</html>

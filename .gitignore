@@ -1,14 +1,53 @@
-# Python
+# --- IDEs y Sistema Operativo ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# --- PYTHON (backend-api y scripts) ---
 __pycache__/
 *.py[cod]
 *$py.class
 .env
 .venv/
 env/
-scripts/venv/
-.vscode/
-*.log
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+.installed.cfg
+*.egg-info/
+.installed.cfg
+.cache/
+.pytest_cache/
 
-# OS
-.DS_Store
-Thumbs.db
+# --- NODE.JS (node-server) ---
+node_server/node_modules/
+node_server/npm-debug.log*
+node_server/yarn-debug.log*
+node_server/yarn-error.log*
+node_server/.pnpm-debug.log*
+
+# Archivos de datos locales y Logs de Node
+node_server/accesos.txt
+node_server/.env
+
+# --- EXCEL Y DATOS TEMPORALES ---
+# Ignora archivos temporales de Excel (empiezan por ~$)
+~$*.xlsx
+scripts/ranking_M.xlsx 
+# Nota: Si quieres subir el Excel original, borra la línea de arriba.
