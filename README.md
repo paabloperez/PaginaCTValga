@@ -95,5 +95,3 @@ CTVALGA/
 
 **© 2026 Club de Tenis Valga.** Desarrollado por **Pablo Pérez**.
 ```
-
-¿Necesitas que te ayude a redactar también el archivo `.gitignore` o el `.env.example` para que el repositorio quede redondo?
