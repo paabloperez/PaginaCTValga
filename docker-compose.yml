@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # Base de Datos
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: user_valga
+      POSTGRES_PASSWORD: password_valga
+      POSTGRES_DB: clubtenis_db
+    ports:
+      - "5432:5432"
+
+  # API Python (FastAPI)
+  backend:
+    build: ./backend-api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://user_valga:password_valga@db:5432/clubtenis_db
+    depends_on:
+      - db
+
+  # Servidor Node.js
+  frontend-server:
+    build: ./node-server
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend

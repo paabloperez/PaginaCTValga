@@ -49,7 +49,7 @@ app.get('/api/clima', async (req, res) => {
 app.get('/api/ranking-club', async (req, res) => {
     try {
         // Asegúrate de que tu servidor de Python esté corriendo en este puerto
-        const response = await fetch('http://127.0.0.1:8000/api/ranking');
+        const response = await fetch('http://backend:8000/api/ranking');
         const jugadores = await response.json();
         res.json(jugadores);
     } catch (error) {
