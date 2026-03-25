@@ -14,7 +14,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  # API Python (FastAPI)
+  #  API Python (FastAPI)
   backend:
     build: ./backend-api
     container_name: ctvalga_backend
@@ -31,7 +31,7 @@ services:
     depends_on:
       - db
 
-  # Servidor Node.js (Express)
+  #  Servidor Node.js (Express)
   frontend-server:
     build: ./node-server
     container_name: ctvalga_frontend
@@ -40,6 +40,6 @@ services:
     depends_on:
       - backend
 
-# DEFINICIÓN DEL VOLUMEN (Es como un disco virtual gestionado por Docker)
+#  DEFINICIÓN DEL VOLUMEN (Es como un disco virtual gestionado por Docker)
 volumes:
   postgres_data:

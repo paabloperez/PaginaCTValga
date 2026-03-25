@@ -46,11 +46,6 @@ node-server/.pnpm-debug.log*
 node-server/accesos.txt
 node-server/.env
 
-# --- EXCEL Y DATOS TEMPORALES ---
-# Ignora archivos temporales de Excel (empiezan por ~$)
-~$*.xlsx
-scripts/ranking_M.xlsx 
-
 # --- DOCKER ---
 # Ignora archivos de configuración local de Docker
 .docker/
