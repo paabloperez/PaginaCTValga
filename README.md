@@ -10,9 +10,9 @@ El proyecto utiliza una arquitectura moderna de microservicios: un backend de da
 
 El proyecto está dividido en tres capas independientes:
 
-1.  **Backend API (Python/FastAPI)**: Gestiona la lógica de negocio, la conexión a **PostgreSQL** y sirve los datos del ranking.
-2.  **Node Server (Node.js/Express)**: Actúa como servidor web principal, consume APIs externas (Clima), gestiona logs de acceso y sirve los archivos estáticos.
-3.  **Frontend (HTML5/CSS3/JS)**: Interfaz de usuario responsive que consume datos de ambas capas de backend.
+1. **Backend API (Python/FastAPI)**: Gestiona la lógica de negocio, la conexión a **PostgreSQL** y sirve los datos del ranking.
+2. **Node Server (Node.js/Express)**: Actúa como servidor web principal, consume APIs externas (Clima), gestiona logs de acceso y sirve los archivos estáticos.
+3. **Frontend (HTML5/CSS3/JS)**: Interfaz de usuario *responsive* que consume datos de ambas capas de backend.
 
 ---
 
@@ -24,6 +24,7 @@ El proyecto está dividido en tres capas independientes:
 
 ### 2. Configuración del Backend (Python)
 Desde la carpeta `backend-api/`:
+
 ```bash
 # Crear y activar entorno virtual
 python -m venv venv
@@ -40,45 +41,59 @@ python ../scripts/import_ranking.py
 
 # Iniciar el servidor de datos
 uvicorn main:app --reload
+```
+> 📍 **API disponible en:** `http://localhost:8000/docs`
 
-API disponible en: http://localhost:8000/docs
-3. Configuración del Servidor Web (Node.js)
+### 3. Configuración del Servidor Web (Node.js)
+Desde la carpeta `node-server/`:
 
-Desde la carpeta node-server/:
-Bash
-
+```bash
 # Instalar dependencias
 npm install
 
 # Iniciar el servidor web
 node app.js
+```
+> 📍 **Web principal disponible en:** `http://localhost:3000`
 
-Web principal disponible en: http://localhost:3000
-📂 Estructura del Proyecto
-Plaintext
+---
 
+## 📂 Estructura del Proyecto
+
+```plaintext
 CTVALGA/
 ├── backend-api/        # API REST en FastAPI y modelos de PostgreSQL.
 ├── node-server/        # Servidor Express.js y Middleware.
 │   ├── public/         # Frontend: HTML, CSS, JS e imágenes.
 │   └── accesos.txt     # Logs automáticos de actividad.
 ├── scripts/            # Utilidades de procesamiento de datos (Pandas/Excel).
-└── .gitignore          # Exclusión de entornos virtuales, node_modules y .env.
+└── .gitignore          # Exclusión de entornos virtuales y node_modules.
+```
 
-🛠️ Tecnologías Utilizadas
-Capa	Tecnologías
-Frontend	HTML5, CSS3 (Grid/Flexbox), JavaScript Moderno (Fetch API)
-Backend App	Node.js, Express.js, CORS
-Backend Data	Python, FastAPI, SQLAlchemy, Pydantic
-Base de Datos	PostgreSQL
-Data Tools	Pandas, Openpyxl (para ingesta de archivos .xlsx)
-APIs Externas	Open-Meteo (Previsión meteorológica en Valga)
-💡 Notas para Colaboradores
+---
 
-    Seguridad: Nunca subas el archivo .env al repositorio. Usa .env.example como plantilla.
+## 🛠️ Tecnologías Utilizadas
 
-    Logs: El servidor Node registra automáticamente cada visita en node-server/accesos.txt.
+| Capa | Tecnologías |
+| :--- | :--- |
+| **Frontend** | HTML5, CSS3 (Grid/Flexbox), JavaScript Moderno (Fetch API) |
+| **Backend App** | Node.js, Express.js, CORS |
+| **Backend Data** | Python, FastAPI, SQLAlchemy, Pydantic |
+| **Base de Datos** | PostgreSQL |
+| **Data Tools** | Pandas, Openpyxl (para ingesta de archivos .xlsx) |
+| **APIs Externas** | Open-Meteo (Previsión meteorológica en Valga) |
 
-    CORS: El sistema está configurado para permitir peticiones entre el puerto 3000 y el 8000.
+---
 
-© 2026 Club de Tenis Valga. Desarrollado por Pablo Pérez.
+## 💡 Notas para Colaboradores
+
+* **Seguridad:** Nunca subas el archivo `.env` al repositorio. Usa `.env.example` como plantilla.
+* **Logs:** El servidor Node registra automáticamente cada visita en `node-server/accesos.txt`.
+* **CORS:** El sistema está configurado para permitir peticiones entre el puerto **3000** y el **8000**.
+
+---
+
+**© 2026 Club de Tenis Valga.** Desarrollado por **Pablo Pérez**.
+```
+
+¿Necesitas que te ayude a redactar también el archivo `.gitignore` o el `.env.example` para que el repositorio quede redondo?
