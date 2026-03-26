@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # Base de Datos (PostgreSQL)
   db:
     image: postgres:15
     container_name: ctvalga_db
@@ -13,8 +12,9 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      # Automatiza la creación de tablas al arrancar por primera vez
+      - ./scripts/schema.sql:/docker-entrypoint-initdb.d/schema.sql
 
-  #  API Python (FastAPI)
   backend:
     build: ./backend-api
     container_name: ctvalga_backend
@@ -27,11 +27,12 @@ services:
       DB_USER: user_valga
       DB_PASSWORD: password_valga
     volumes:
+      # Mapea toda la carpeta scripts. 
+      # Dentro de Docker, verás todo en la ruta /app/scripts/
       - ./scripts:/app/scripts
     depends_on:
       - db
 
-  #  Servidor Node.js (Express)
   frontend-server:
     build: ./node-server
     container_name: ctvalga_frontend
@@ -40,6 +41,5 @@ services:
     depends_on:
       - backend
 
-#  DEFINICIÓN DEL VOLUMEN (Es como un disco virtual gestionado por Docker)
 volumes:
   postgres_data:
