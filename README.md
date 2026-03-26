@@ -2,113 +2,84 @@
 
 ¡Bienvenido! Esta es una aplicación profesional diseñada para la gestión del ranking y la visualización de datos en tiempo real del **Club de Tenis Valga**. 
 
-El proyecto utiliza una arquitectura moderna de microservicios totalmente **contenedorizada con Docker**, garantizando que el sistema funcione en cualquier entorno sin necesidad de configurar bases de datos o entornos virtuales manualmente.
+El proyecto utiliza una arquitectura moderna de microservicios totalmente **contenedorizada con Docker**, lo que permite desplegar toda la infraestructura (Base de Datos, API y Servidor Web) con un solo comando.
 
 ---
 
 ## 🏗️ Arquitectura del Sistema (Microservicios)
 
-El sistema se despliega mediante **Docker Compose** en tres contenedores independientes que se comunican a través de una red interna privada:
+El sistema se despliega mediante **Docker Compose** en tres contenedores independientes:
 
-1.  **`db` (PostgreSQL 15)**: Base de datos relacional para la persistencia de jugadores y rankings.
-2.  **`backend` (Python/FastAPI)**: API REST que gestiona la lógica de negocio, modelos de SQLAlchemy y comunicación con la DB.
-3.  **`frontend-server` (Node.js/Express)**: Servidor web principal, gestor de logs de acceso, puente con la API de clima y servidor de archivos estáticos.
+1.  **`ctvalga_db` (PostgreSQL 15)**: Base de datos persistente. Se inicializa automáticamente con el esquema de tablas.
+2.  **`ctvalga_backend` (Python/FastAPI)**: API REST que gestiona la lógica de negocio y el procesamiento de datos.
+3.  **`ctvalga_frontend` (Node.js/Express)**: Servidor web principal, gestor de logs y puente con la API de clima.
 
 ---
 
 ## 🚀 Guía de Configuración Rápida (Docker)
 
-La principal ventaja de esta arquitectura es la simplicidad. Solo necesitas tener instalado [Docker Desktop](https://www.docker.com/products/docker-desktop/).
-
 ### 1. Levantar la infraestructura
 Desde la raíz del proyecto `CTValga/`, ejecuta:
 
 ```bash
-# Construir las imágenes y levantar los servicios en segundo plano
-docker-compose up -d --build
-```
+# Construir imágenes y levantar servicios (las tablas se crean solas)
+docker compose up -d --build
+````
 
-### 2. Inicializar la Base de Datos (Primer inicio)
-Como la base de datos nace limpia, debemos crear la estructura e importar los datos del ranking:
+### 2\. Importar Datos del Ranking
+
+Para poblar la base de datos desde el archivo Excel (`scripts/ranking_M.xlsx`), solo necesitas ejecutar el script de importación dentro del contenedor:
 
 ```bash
-# A. Crear las tablas necesarias en Postgres
-docker exec -it ctvalga_db_1 psql -U user_valga -d clubtenis_db -c "
-CREATE TABLE IF NOT EXISTS players (
-    id SERIAL PRIMARY KEY,
-    licencia VARCHAR(20) UNIQUE NOT NULL,
-    nombre_completo VARCHAR(255) NOT NULL,
-    club_federacion VARCHAR(255),
-    categoria VARCHAR(100)
-);
-CREATE TABLE IF NOT EXISTS ranking_entry (
-    id SERIAL PRIMARY KEY,
-    player_id INTEGER REFERENCES players(id),
-    puntos INTEGER,
-    posicion_global INTEGER,
-    posicion_club INTEGER,
-    fecha_ranking DATE,
-    UNIQUE(player_id, fecha_ranking)
-);"
-
-# B. Importar datos desde el archivo Excel
-docker cp ./scripts/import_ranking.py ctvalga_backend_1:/app/import_ranking.py
-docker cp ./scripts/ranking_M.xlsx ctvalga_backend_1:/app/ranking_M.xlsx
-docker exec -it ctvalga_backend_1 python import_ranking.py
+# Ejecutar la importación (Docker ya ve el Excel gracias a los volúmenes)
+docker exec -it -w /app/scripts ctvalga_backend python import_ranking.py
 ```
 
----
+-----
 
 ## 📍 Puntos de Acceso
 
 | Servicio | URL Local | Descripción |
 | :--- | :--- | :--- |
-| **Web Principal** | `http://localhost:3000` | Interfaz de usuario y Ranking |
-| **Documentación API** | `http://localhost:8000/docs` | Swagger UI interactivo de FastAPI |
-| **API Clima** | `http://localhost:3000/api/clima` | Endpoint de meteorología (Node) |
+| **Web Principal** | [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000) | Interfaz de usuario y Ranking |
+| **Documentación API** | [http://localhost:8000/docs](https://www.google.com/search?q=http://localhost:8000/docs) | Swagger UI (FastAPI) |
 
----
+-----
 
 ## 📂 Estructura del Proyecto
 
 ```plaintext
 CTVALGA/
-├── docker-compose.yml   # Orquestador de contenedores.
+├── docker-compose.yml   # Orquestador de la infraestructura.
 ├── backend-api/         # Microservicio Python (FastAPI).
-│   ├── Dockerfile
-│   └── main.py
-├── node-server/         # Microservicio Node.js (Express).
-│   ├── Dockerfile
-│   ├── app.js
-│   └── public/          # Frontend: HTML, CSS y JS.
-├── scripts/             # Scripts de utilidad (Pandas/Excel).
-└── .env                 # Variables de entorno configuradas para Docker.
+├── node-server/         # Microservicio Node.js (Express) + Frontend.
+└── scripts/             # Carpeta persistente (Excel, SQL y Scripts).
+    ├── schema.sql       # Script de creación automática de tablas.
+    ├── ranking_M.xlsx   # Fuente de datos Excel.
+    └── import_ranking.py # Lógica de importación a la DB.
 ```
 
----
+-----
 
 ## 🛠️ Tecnologías Utilizadas
 
 | Capa | Tecnologías |
 | :--- | :--- |
-| **Orquestación** | Docker, Docker Compose |
+| **Orquestación** | Docker & Docker Compose |
 | **Frontend** | HTML5, CSS3, JavaScript (Fetch API) |
-| **Servidor App** | Node.js, Express.js, CORS |
-| **API de Datos** | Python 3.10, FastAPI, SQLAlchemy |
-| **Base de Datos** | PostgreSQL 15 |
-| **Procesamiento** | Pandas, Openpyxl |
+| **Servidores** | Node.js (Express), Python (FastAPI) |
+| **Persistencia** | PostgreSQL 15 + Docker Volumes |
+| **Data Science** | Pandas, Openpyxl |
 
----
+-----
 
 ## 💡 Comandos de Mantenimiento
 
-* **Ver estado de servicios**: `docker ps`
-* **Ver logs del backend**: `docker logs -f ctvalga_backend_1`
-* **Pausar el club (Mantiene datos)**: `docker-compose stop`
-* **Reiniciar servicios**: `docker-compose restart`
-* **Borrar infraestructura**: `docker-compose down` (Cuidado: borra la BD si no hay volúmenes).
+  * **Ver estado de los contenedores**: `docker ps`
+  * **Ver logs en tiempo real**: `docker logs -f ctvalga_backend`
+  * **Apagar el sistema (Mantiene datos)**: `docker compose stop`
+  * **Borrar todo (Limpieza profunda)**: `docker compose down -v`
 
----
+-----
 
 **© 2026 Club de Tenis Valga.** Desarrollado por **Pablo Pérez**.
-```
