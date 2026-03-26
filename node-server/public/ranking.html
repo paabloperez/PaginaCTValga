@@ -36,7 +36,7 @@
 
             try {
                 // Pedimos los datos a NUESTRO servidor de Node (puerto 3000)
-                const response = await fetch('http://localhost:3000/api/ranking-club');
+                const response = await fetch('/api/ranking-club');
                 const jugadores = await response.json();
 
                 let tablaHTML = `
