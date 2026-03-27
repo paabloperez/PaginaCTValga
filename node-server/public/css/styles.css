@@ -269,3 +269,42 @@ a{
 .tabla-ranking tbody tr:hover {
     background-color: #f1f8e9; /* Efecto al pasar el ratón */
 }
+/* Barra de Administración */
+.admin-bar {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 10px 25px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 2px solid #2ecc71; /* Un toque verde tenis */
+    font-family: sans-serif;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+#welcome-msg {
+    color: #333;
+    font-weight: 500;
+}
+
+.auth-btn {
+    padding: 6px 18px;
+    border-radius: 20px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    background: #007bff;
+    color: white;
+    transition: 0.3s;
+}
+
+.auth-btn.logout {
+    background: #e74c3c;
+}
+
+.auth-btn:hover {
+    transform: scale(1.05);
+}

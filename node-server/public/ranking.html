@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎾 Club de Tenis Valga - Ranking</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
+    <div id="admin-bar" class="admin-bar">
+        <span id="welcome-msg">Invitado</span>
+        <button id="auth-btn" class="auth-btn">Login</button>
+    </div>
+
     <header class="cabecera-jugadores">
         <a href="index.html" class="back-link">← Volver al Inicio</a>
         <img src="assets/logoCTValga.jpeg" alt="Logo del Club de Tenis Valga" class="club-logo">
@@ -30,12 +35,39 @@
     </footer>
 
     <script>
+        // --- 1. LÓGICA DE AUTENTICACIÓN (NUEVA) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('adminToken');
+            const welcomeMsg = document.getElementById('welcome-msg');
+            const authBtn = document.getElementById('auth-btn');
+
+            if (token) {
+                try {
+                    // Decodificamos el nombre del admin desde el Token JWT (Base64)
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    welcomeMsg.innerHTML = `👋 Hola, <strong>${payload.sub}</strong>`;
+                    
+                    authBtn.textContent = 'Cerrar Sesión';
+                    authBtn.classList.add('logout');
+                    authBtn.onclick = () => {
+                        localStorage.removeItem('adminToken');
+                        window.location.reload();
+                    };
+                } catch (e) {
+                    console.error("Token corrupto o inválido");
+                    localStorage.removeItem('adminToken');
+                }
+            } else {
+                authBtn.onclick = () => { window.location.href = 'login.html'; };
+            }
+        });
+
+        // --- 2. TU LÓGICA DE RANKING (AJUSTADA) ---
         async function cargarRanking() {
             const contenedor = document.getElementById('ranking-api-container');
             if (!contenedor) return;
 
             try {
-                // Pedimos los datos a NUESTRO servidor de Node (puerto 3000)
                 const response = await fetch('/api/ranking-club');
                 const jugadores = await response.json();
 
@@ -54,7 +86,7 @@
                 jugadores.forEach(jugador => {
                     tablaHTML += `
                         <tr>
-                            <td>${jugador.posicion_club}</td>
+                            <td>${jugador.posicion_club || '-'}</td>
                             <td>${jugador.nombre_completo}</td>
                             <td>${jugador.puntos}</td>
                         </tr>
@@ -70,9 +102,5 @@
             }
         }
 
-        // Ejecutamos la función
         cargarRanking();
     </script>
-    
-</body>
-</html>

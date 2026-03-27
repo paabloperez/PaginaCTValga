@@ -38,6 +38,8 @@ services:
     container_name: ctvalga_frontend
     ports:
       - "3000:3000"
+    volumes:
+      - ./node-server:/app
     depends_on:
       - backend
 

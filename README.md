@@ -1,85 +1,82 @@
-# 🎾 Club de Tenis Valga - Sistema de Gestión Full-Stack (Docker Edition)
+# 🎾 Club de Tenis Valga - Full-Stack (Docker & JWT Security)
 
-¡Bienvenido! Esta es una aplicación profesional diseñada para la gestión del ranking y la visualización de datos en tiempo real del **Club de Tenis Valga**. 
-
-El proyecto utiliza una arquitectura moderna de microservicios totalmente **contenedorizada con Docker**, lo que permite desplegar toda la infraestructura (Base de Datos, API y Servidor Web) con un solo comando.
+¡Proyecto completado! Esta es una aplicación profesional de alto rendimiento para la gestión del ranking del **Club de Tenis Valga**, diseñada con una arquitectura de microservicios moderna y segura.
 
 ---
 
 ## 🏗️ Arquitectura del Sistema (Microservicios)
 
-El sistema se despliega mediante **Docker Compose** en tres contenedores independientes:
+El sistema se despliega mediante **Docker Compose** en tres contenedores sincronizados:
 
-1.  **`ctvalga_db` (PostgreSQL 15)**: Base de datos persistente. Se inicializa automáticamente con el esquema de tablas.
-2.  **`ctvalga_backend` (Python/FastAPI)**: API REST que gestiona la lógica de negocio y el procesamiento de datos.
-3.  **`ctvalga_frontend` (Node.js/Express)**: Servidor web principal, gestor de logs y puente con la API de clima.
+1.  **`ctvalga_db` (PostgreSQL 15)**: Persistencia de datos (Jugadores, Rankings y Admins).
+2.  **`ctvalga_backend` (FastAPI/Python)**: El "cerebro" del club. Gestiona la lógica de negocio, importación de Excel y **seguridad JWT (JSON Web Tokens)** con hasheo de contraseñas mediante `bcrypt`.
+3.  **`ctvalga_frontend` (Node.js/Express)**: Servidor web que sirve la interfaz, gestiona logs de acceso y conecta con la API de clima externa.
+
+
 
 ---
 
-## 🚀 Guía de Configuración Rápida (Docker)
+## 🛡️ Seguridad y Administración
+
+El sistema incluye una **Capa de Seguridad Industrial**:
+* **Hasheo Bcrypt**: Las contraseñas nunca se guardan en texto plano; se transforman en hashes irreversibles en la base de datos.
+* **Tokens JWT**: El panel de administración emite "pasaportes digitales" firmados que caducan automáticamente.
+* **Validación de Sesión**: La interfaz reconoce al administrador y personaliza la experiencia (saludo dinámico y botones de sesión).
+
+---
+
+## 🚀 Guía de Configuración Rápida
 
 ### 1. Levantar la infraestructura
-Desde la raíz del proyecto `CTValga/`, ejecuta:
-
 ```bash
-# Construir imágenes y levantar servicios (las tablas se crean solas)
+# Construir y levantar todo el ecosistema
 docker compose up -d --build
-````
-
-### 2\. Importar Datos del Ranking
-
-Para poblar la base de datos desde el archivo Excel (`scripts/ranking_M.xlsx`), solo necesitas ejecutar el script de importación dentro del contenedor:
-
-```bash
-# Ejecutar la importación (Docker ya ve el Excel gracias a los volúmenes)
-docker exec -it -w /app/scripts ctvalga_backend python import_ranking.py
 ```
 
------
+### 2. Importar Datos y Crear Admin
+```bash
+# Importar el ranking desde el Excel
+docker exec -it ctvalga_backend python /app/scripts/import_ranking.py
 
-## 📍 Puntos de Acceso
+# (Opcional) Crear/Resetear el Administrador
+# Usuario: perez_admin | Pass: REDACTED
+docker exec -it ctvalga_backend python -c "import psycopg2, bcrypt, os; conn = psycopg2.connect(dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'), password=os.getenv('DB_PASSWORD'), host=os.getenv('DB_HOST'), port=os.getenv('DB_PORT')); cur = conn.cursor(); hashed = bcrypt.hashpw(b'REDACTED', bcrypt.gensalt()).decode(); cur.execute('DELETE FROM admins WHERE username = \'perez_admin\''); cur.execute('INSERT INTO admins (username, password_hash) VALUES (%s, %s)', ('perez_admin', hashed)); conn.commit(); print('✅ Admin configurado')"
+```
 
-| Servicio | URL Local | Descripción |
-| :--- | :--- | :--- |
-| **Web Principal** | [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000) | Interfaz de usuario y Ranking |
-| **Documentación API** | [http://localhost:8000/docs](https://www.google.com/search?q=http://localhost:8000/docs) | Swagger UI (FastAPI) |
+---
 
------
-
-## 📂 Estructura del Proyecto
+## 📂 Estructura Final del Proyecto
 
 ```plaintext
 CTVALGA/
-├── docker-compose.yml   # Orquestador de la infraestructura.
-├── backend-api/         # Microservicio Python (FastAPI).
-├── node-server/         # Microservicio Node.js (Express) + Frontend.
-└── scripts/             # Carpeta persistente (Excel, SQL y Scripts).
-    ├── schema.sql       # Script de creación automática de tablas.
-    ├── ranking_M.xlsx   # Fuente de datos Excel.
-    └── import_ranking.py # Lógica de importación a la DB.
+├── docker-compose.yml     # Orquestador de servicios.
+├── backend-api/           # Lógica FastAPI + Seguridad JWT + Bcrypt.
+├── node-server/
+│   └── public/            # Frontend (HTML, CSS, JS).
+│       ├── css/           # Estilos (styles.css, login.css).
+│       ├── js/            # Lógica (login.js, ranking dinámico).
+│       └── assets/        # Imágenes y Logos.
+└── scripts/               # Volumen persistente (Excel, SQL, Logs).
 ```
 
------
+---
 
-## 🛠️ Tecnologías Utilizadas
+## 📍 Puntos de Acceso
 
-| Capa | Tecnologías |
-| :--- | :--- |
-| **Orquestación** | Docker & Docker Compose |
-| **Frontend** | HTML5, CSS3, JavaScript (Fetch API) |
-| **Servidores** | Node.js (Express), Python (FastAPI) |
-| **Persistencia** | PostgreSQL 15 + Docker Volumes |
-| **Data Science** | Pandas, Openpyxl |
+| Servicio | URL Local | Acceso |
+| :--- | :--- | :--- |
+| **Web / Ranking** | `http://localhost:3000` | Público |
+| **Panel Admin** | `http://localhost:3000/login.html` | Restringido |
+| **Docs API** | `http://localhost:8000/docs` | Desarrollador |
 
------
+---
 
-## 💡 Comandos de Mantenimiento
+## 💡 Comandos de Emergencia
 
-  * **Ver estado de los contenedores**: `docker ps`
-  * **Ver logs en tiempo real**: `docker logs -f ctvalga_backend`
-  * **Apagar el sistema (Mantiene datos)**: `docker compose stop`
-  * **Borrar todo (Limpieza profunda)**: `docker compose down -v`
+* **¿Algo no carga?** Revisa logs: `docker compose logs -f`
+* **¿Cambiaste el CSS/JS?** Pulsa `Ctrl + F5` en el navegador.
+* **¿Quieres apagarlo todo?** `docker compose down` (Tus datos seguirán a salvo).
 
------
+---
 
-**© 2026 Club de Tenis Valga.** Desarrollado por **Pablo Pérez**.
+**© 2026 Club de Tenis Valga.** Desarrollado por **Pablo Pérez**. 🎾🏆

@@ -21,3 +21,9 @@ CREATE TABLE ranking_entry (
     fecha_ranking DATE,
     UNIQUE(player_id, fecha_ranking)
 );
+
+CREATE TABLE IF NOT EXISTS admins (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL
+);
