@@ -1,82 +1,104 @@
-# 🎾 Club de Tenis Valga - Full-Stack (Docker & JWT Security)
+# 🎾 Club de Tenis Valga — Full-Stack Web App
 
-¡Proyecto completado! Esta es una aplicación profesional de alto rendimiento para la gestión del ranking del **Club de Tenis Valga**, diseñada con una arquitectura de microservicios moderna y segura.
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL_15-4169E1?style=flat&logo=postgresql&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=nodedotjs&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=flat&logo=jsonwebtokens&logoColor=white)
 
----
-
-## 🏗️ Arquitectura del Sistema (Microservicios)
-
-El sistema se despliega mediante **Docker Compose** en tres contenedores sincronizados:
-
-1.  **`ctvalga_db` (PostgreSQL 15)**: Persistencia de datos (Jugadores, Rankings y Admins).
-2.  **`ctvalga_backend` (FastAPI/Python)**: El "cerebro" del club. Gestiona la lógica de negocio, importación de Excel y **seguridad JWT (JSON Web Tokens)** con hasheo de contraseñas mediante `bcrypt`.
-3.  **`ctvalga_frontend` (Node.js/Express)**: Servidor web que sirve la interfaz, gestiona logs de acceso y conecta con la API de clima externa.
-
-
+Aplicación web full-stack para la gestión del ranking del **Club de Tenis Valga**. Arquitectura de tres servicios orquestados con Docker Compose, panel de administración protegido con JWT y base de datos PostgreSQL.
 
 ---
 
-## 🛡️ Seguridad y Administración
+## 🏗️ Arquitectura
 
-El sistema incluye una **Capa de Seguridad Industrial**:
-* **Hasheo Bcrypt**: Las contraseñas nunca se guardan en texto plano; se transforman en hashes irreversibles en la base de datos.
-* **Tokens JWT**: El panel de administración emite "pasaportes digitales" firmados que caducan automáticamente.
-* **Validación de Sesión**: La interfaz reconoce al administrador y personaliza la experiencia (saludo dinámico y botones de sesión).
+El sistema se despliega en tres contenedores sincronizados mediante **Docker Compose**:
+
+| Contenedor | Tecnología | Responsabilidad |
+| :--- | :--- | :--- |
+| `ctvalga_db` | PostgreSQL 15 | Persistencia de jugadores, rankings y admins |
+| `ctvalga_backend` | FastAPI / Python | Lógica de negocio, JWT, importación de Excel |
+| `ctvalga_frontend` | Node.js / Express | Servidor web, logs de acceso, API de clima |
 
 ---
 
-## 🚀 Guía de Configuración Rápida
+## 🛡️ Seguridad
 
-### 1. Levantar la infraestructura
+- **Bcrypt**: las contraseñas se almacenan como hashes irreversibles, nunca en texto plano.
+- **JWT**: el panel de administración emite tokens firmados con expiración automática.
+- **Variables de entorno**: toda la configuración sensible se gestiona mediante `.env`.
+
+---
+
+## 🚀 Instalación
+
+### 1. Prerrequisitos
+
+- [Docker](https://docs.docker.com/get-docker/) y Docker Compose v2.0+
+
+### 2. Configurar variables de entorno
+
+Copia el archivo de ejemplo y rellena tus valores:
+
 ```bash
-# Construir y levantar todo el ecosistema
+cp .env.example .env
+```
+
+### 3. Levantar la infraestructura
+
+```bash
 docker compose up -d --build
 ```
 
-### 2. Importar Datos y Crear Admin
+### 4. Importar datos y crear el administrador
+
 ```bash
-# Importar el ranking desde el Excel
+# Importar el ranking desde Excel
 docker exec -it ctvalga_backend python /app/scripts/import_ranking.py
 
-# (Opcional) Crear/Resetear el Administrador
-# Usuario: perez_admin | Pass: REDACTED
-docker exec -it ctvalga_backend python -c "import psycopg2, bcrypt, os; conn = psycopg2.connect(dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'), password=os.getenv('DB_PASSWORD'), host=os.getenv('DB_HOST'), port=os.getenv('DB_PORT')); cur = conn.cursor(); hashed = bcrypt.hashpw(b'REDACTED', bcrypt.gensalt()).decode(); cur.execute('DELETE FROM admins WHERE username = \'perez_admin\''); cur.execute('INSERT INTO admins (username, password_hash) VALUES (%s, %s)', ('perez_admin', hashed)); conn.commit(); print('✅ Admin configurado')"
+# Crear o resetear el administrador (usa las credenciales de tu .env)
+docker exec -it ctvalga_backend python /app/scripts/create_admin.py
 ```
 
 ---
 
-## 📂 Estructura Final del Proyecto
+## 📂 Estructura del Proyecto
 
 ```plaintext
 CTVALGA/
-├── docker-compose.yml     # Orquestador de servicios.
-├── backend-api/           # Lógica FastAPI + Seguridad JWT + Bcrypt.
+├── docker-compose.yml     # Orquestador de servicios
+├── .env.example           # Plantilla de variables de entorno
+├── backend-api/           # FastAPI + JWT + Bcrypt
 ├── node-server/
-│   └── public/            # Frontend (HTML, CSS, JS).
-│       ├── css/           # Estilos (styles.css, login.css).
-│       ├── js/            # Lógica (login.js, ranking dinámico).
-│       └── assets/        # Imágenes y Logos.
-└── scripts/               # Volumen persistente (Excel, SQL, Logs).
+│   └── public/            # Frontend (HTML, CSS, JS)
+│       ├── css/
+│       ├── js/
+│       └── assets/
+└── scripts/               # Scripts de inicialización y datos
 ```
 
 ---
 
 ## 📍 Puntos de Acceso
 
-| Servicio | URL Local | Acceso |
+| Servicio | URL | Acceso |
 | :--- | :--- | :--- |
-| **Web / Ranking** | `http://localhost:3000` | Público |
-| **Panel Admin** | `http://localhost:3000/login.html` | Restringido |
-| **Docs API** | `http://localhost:8000/docs` | Desarrollador |
+| Web / Ranking | `http://localhost:3000` | Público |
+| Panel Admin | `http://localhost:3000/login.html` | Restringido |
+| Docs API | `http://localhost:8000/docs` | Desarrollador |
 
 ---
 
-## 💡 Comandos de Emergencia
+## 🔧 Comandos Útiles
 
-* **¿Algo no carga?** Revisa logs: `docker compose logs -f`
-* **¿Cambiaste el CSS/JS?** Pulsa `Ctrl + F5` en el navegador.
-* **¿Quieres apagarlo todo?** `docker compose down` (Tus datos seguirán a salvo).
+| Acción | Comando |
+| :--- | :--- |
+| Ver logs en vivo | `docker compose logs -f` |
+| Detener todo | `docker compose down` |
+| Reconstruir tras cambios | `docker compose up -d --build` |
+
+> Si cambias CSS o JS estáticos, fuerza recarga con `Ctrl + F5` en el navegador.
 
 ---
 
-**© 2026 Club de Tenis Valga.** Desarrollado por **Pablo Pérez**. 🎾🏆
+**© 2026 Club de Tenis Valga.** Desarrollado por **Pablo Pérez**. 🎾
