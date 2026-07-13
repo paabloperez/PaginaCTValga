@@ -5,9 +5,9 @@ services:
     image: postgres:15
     container_name: ctvalga_db
     environment:
-      POSTGRES_USER: user_valga
-      POSTGRES_PASSWORD: password_valga
-      POSTGRES_DB: clubtenis_db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - "5432:5432"
     volumes:
@@ -21,14 +21,12 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql://user_valga:password_valga@db:5432/clubtenis_db
       DB_HOST: db
-      DB_NAME: clubtenis_db
-      DB_USER: user_valga
-      DB_PASSWORD: password_valga
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SECRET_KEY: ${SECRET_KEY}
     volumes:
-      # Mapea toda la carpeta scripts. 
-      # Dentro de Docker, verás todo en la ruta /app/scripts/
       - ./scripts:/app/scripts
     depends_on:
       - db
